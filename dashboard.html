@@ -1,0 +1,229 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION["user_id"]) || !isset($_SESSION["logged_in"]) || $_SESSION["logged_in"] !== true) {
+    header("Location: login.html");
+    exit();
+}
+
+$user_email = $_SESSION["email"];
+$user_id = $_SESSION["user_id"];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Supabase Clone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-email {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .welcome-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .welcome-title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-subtitle {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .session-info {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .session-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .session-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .session-item {
+            margin-bottom: 10px;
+        }
+        
+        .session-key {
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .session-value {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Supabase Clone</div>
+        <div class="user-info">
+            <span class="user-email"><?php echo htmlspecialchars($user_email); ?></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Welcome, <?php echo htmlspecialchars($user_email); ?>!</h1>
+            <p class="welcome-subtitle">You have successfully logged into your dashboard</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">1</div>
+                <div class="stat-label">Active Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo date('H:i'); ?></div>
+                <div class="stat-label">Current Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><?php echo date('M d'); ?></div>
+                <div class="stat-label">Today's Date</div>
+            </div>
+        </div>
+        
+        <div class="session-info">
+            <h2 class="session-title">Session Information</h2>
+            <div class="session-details">
+                <div class="session-item">
+                    <span class="session-key">User ID:</span>
+                    <span class="session-value"><?php echo htmlspecialchars($user_id); ?></span>
+                </div>
+                <div class="session-item">
+                    <span class="session-key">Email:</span>
+                    <span class="session-value"><?php echo htmlspecialchars($user_email); ?></span>
+                </div>
+                <div class="session-item">
+                    <span class="session-key">Login Time:</span>
+                    <span class="session-value"><?php echo date('Y-m-d H:i:s'); ?></span>
+                </div>
+                <div class="session-item">
+                    <span class="session-key">Session ID:</span>
+                    <span class="session-value"><?php echo session_id(); ?></span>
+                </div>
+                <div class="session-item">
+                    <span class="session-key">Full Session Data:</span>
+                    <span class="session-value"><?php echo htmlspecialchars(print_r($_SESSION, true)); ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'logout.php';
+            }
+        }
+    </script>
+</body>
+</html>
